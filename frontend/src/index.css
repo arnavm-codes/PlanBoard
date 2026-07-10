@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tells the browser to render native form chrome (select popups, date
+   pickers, etc.) with dark-appropriate colors instead of always defaulting
+   to a light popup regardless of our Tailwind dark: classes. */
+:root {
+  color-scheme: light;
+}
+:root.dark {
+  color-scheme: dark;
+}
+
+/* Belt-and-suspenders: color-scheme alone isn't enough in every browser to
+   re-color a <select>'s native option popup, so explicitly set option
+   colors too — most browsers (Chrome/Edge) do respect background-color and
+   color set directly on <option>. */
+select option {
+  background-color: #ffffff;
+  color: #111827;
+}
+:root.dark select option {
+  background-color: #1f2937;
+  color: #f3f4f6;
+}
+
+/* The browser's native dropdown-arrow box doesn't respect our rounded
+   corners (border-radius) or the dark color-scheme above — on some
+   platforms/browsers it renders as a separate light box that pokes out past
+   a pill-shaped (rounded-full) select's boundary. Turning off native
+   appearance removes that box entirely; the select is still fully
+   clickable without it. */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
