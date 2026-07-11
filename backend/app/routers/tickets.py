@@ -107,8 +107,25 @@ def create_ticket(
         description=f"{current_user.username} created ticket '{ticket.title}'",
         project_id=project_id,
     )
+
+    notification = None
+    if ticket.assignee_id is not None and ticket.assignee_id != current_user.id:
+        notification = notify_user(
+            db,
+            user_id=ticket.assignee_id,
+            type_="ticket_created",
+            message=f"You were assigned to new ticket '{ticket.title}'",
+            related_ticket_id=ticket.id,
+        )
+
     db.commit()
     db.refresh(ticket)
+
+    if notification is not None:
+        push_notification(
+            notification.user_id, NotificationOut.model_validate(notification).model_dump(mode="json")
+        )
+
     logger.info("Ticket %s created in project_id=%s by user_id=%s", ticket.id, project_id, current_user.id)
     return ticket
 

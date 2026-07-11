@@ -4,6 +4,7 @@ import { Trash2 } from "lucide-react";
 import { User } from "../api/auth";
 import { listUsers } from "../api/users";
 import { createProject, deleteProject, listProjects, Project } from "../api/projects";
+import { projectColorClasses } from "../utils/projectColors";
 
 interface ProjectsPageProps {
   currentUser: User;
@@ -96,7 +97,7 @@ function ProjectsPage({ currentUser }: ProjectsPageProps) {
               <div key={p.id} className="relative w-64">
                 <Link
                   to={`/projects/${p.id}`}
-                  className="block rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 pr-10 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-shadow"
+                  className={`block rounded-lg border p-4 pr-10 hover:shadow-md transition-shadow ${projectColorClasses(p.id)}`}
                 >
                   <p className="font-medium">{p.name}</p>
                   {p.description && (

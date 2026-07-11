@@ -28,7 +28,7 @@ def _check_due_dates(session_factory: sessionmaker) -> None:
                 Ticket.assignee_id.isnot(None),
                 Ticket.due_date.isnot(None),
                 Ticket.due_date <= cutoff,
-                Ticket.status != TicketStatus.done,
+                Ticket.status.notin_([TicketStatus.done, TicketStatus.cancelled]),
             )
             .all()
         )

@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { Plus, Search, Users as UsersIcon, Activity as ActivityIcon } from "lucide-react";
 import { User } from "../api/auth";
 import { listUsers } from "../api/users";
@@ -26,6 +26,7 @@ interface ProjectDetailPageProps {
 function ProjectDetailPage({ currentUser }: ProjectDetailPageProps) {
   const { projectId } = useParams<{ projectId: string }>();
   const id = Number(projectId);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [project, setProject] = useState<ProjectDetail | null>(null);
   const [allUsers, setAllUsers] = useState<User[]>([]);
@@ -101,6 +102,19 @@ function ProjectDetailPage({ currentUser }: ProjectDetailPageProps) {
     if (!loading) refreshTickets();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
+
+  // Deep link from notifications / activity: /projects/:id?ticket=<id> opens
+  // that ticket's detail modal directly instead of just landing on the board.
+  useEffect(() => {
+    const ticketParam = searchParams.get("ticket");
+    if (ticketParam) {
+      setOpenTicketId(Number(ticketParam));
+      const next = new URLSearchParams(searchParams);
+      next.delete("ticket");
+      setSearchParams(next, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   async function handleSaveMeta(e: FormEvent) {
     e.preventDefault();

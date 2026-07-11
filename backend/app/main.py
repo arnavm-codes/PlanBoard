@@ -9,7 +9,7 @@ from app.core.due_date_scheduler import run_due_date_check
 from app.core.notifications import set_event_loop
 from app.database import SessionLocal
 from app.logging_config import configure_logging
-from app.routers import activity, auth, dashboard, health, notifications, projects, tickets, users
+from app.routers import activity, auth, dashboard, health, notifications, projects, search, tickets, users
 
 configure_logging()
 
@@ -40,3 +40,4 @@ app.include_router(tickets.router)
 app.include_router(activity.router)
 app.include_router(dashboard.router)
 app.include_router(notifications.router)
+app.include_router(search.router)

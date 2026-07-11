@@ -9,6 +9,7 @@ import ProjectDetailPage from "./pages/ProjectDetailPage";
 import UsersPage from "./pages/UsersPage";
 import ActivityPage from "./pages/ActivityPage";
 import NotificationBell from "./components/NotificationBell";
+import OmniSearchBar from "./components/OmniSearchBar";
 import Avatar from "./components/Avatar";
 import { useTheme, toggleTheme } from "./hooks/useTheme";
 
@@ -77,7 +78,7 @@ function App() {
     <div className="h-screen overflow-hidden flex bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
       <aside className="w-56 shrink-0 h-full border-r border-gray-200 dark:border-gray-800 flex flex-col">
         <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-800 shrink-0">
-          <span className="text-lg font-semibold">PlanBoard</span>
+          <span className="font-pixel font-bold text-xl tracking-wide">PlanBoard</span>
         </div>
 
         <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
@@ -123,7 +124,8 @@ function App() {
         {/* Dedicated top bar for the notification bell — part of normal page
             flow (not a floating overlay), so page content always starts
             below it and nothing can ever render in the same space. */}
-        <div className="sticky top-0 z-40 flex justify-end px-6 py-3 bg-white/90 dark:bg-gray-950/90 backdrop-blur border-b border-gray-200 dark:border-gray-800">
+        <div className="sticky top-0 z-40 flex items-center justify-between gap-4 px-6 py-3 bg-white/90 dark:bg-gray-950/90 backdrop-blur border-b border-gray-200 dark:border-gray-800">
+          <OmniSearchBar currentUser={user} />
           <NotificationBell />
         </div>
         <main className="p-6">
