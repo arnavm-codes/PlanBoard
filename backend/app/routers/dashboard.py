@@ -43,7 +43,10 @@ def get_my_dashboard(current_user: User = Depends(get_current_user), db: Session
 
     open_assigned = (
         db.query(Ticket)
-        .filter(Ticket.assignee_id == current_user.id, Ticket.status != TicketStatus.done)
+        .filter(
+            Ticket.assignee_id == current_user.id,
+            Ticket.status.notin_([TicketStatus.done, TicketStatus.cancelled]),
+        )
         .join(Project, Project.id == Ticket.project_id)
         .order_by(Ticket.due_date.is_(None), Ticket.due_date)
         .all()
@@ -107,7 +110,7 @@ def get_insights(current_user: User = Depends(get_current_user), db: Session = D
                 Ticket.project_id == project.id,
                 Ticket.due_date.isnot(None),
                 Ticket.due_date < today,
-                Ticket.status != TicketStatus.done,
+                Ticket.status.notin_([TicketStatus.done, TicketStatus.cancelled]),
             )
             .count()
         )
@@ -117,7 +120,7 @@ def get_insights(current_user: User = Depends(get_current_user), db: Session = D
             .filter(
                 Ticket.project_id == project.id,
                 Ticket.assignee_id.isnot(None),
-                Ticket.status != TicketStatus.done,
+                Ticket.status.notin_([TicketStatus.done, TicketStatus.cancelled]),
             )
             .group_by(Ticket.assignee_id)
             .all()

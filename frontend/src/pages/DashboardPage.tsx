@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { DashboardInsights, DashboardMe, getDashboardInsights, getDashboardMe } from "../api/dashboard";
 import { COLUMNS, PRIORITY_COLORS, PRIORITY_LABELS } from "../constants/priority";
 
@@ -13,6 +13,7 @@ function DashboardPage() {
   const [insights, setInsights] = useState<DashboardInsights | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     Promise.all([getDashboardMe(), getDashboardInsights()])
@@ -32,34 +33,38 @@ function DashboardPage() {
 
   return (
     <div className="max-w-4xl space-y-10">
-      <div>
+      <div className="border border-gray-200 dark:border-gray-700 rounded-md p-4">
         <h1 className="text-xl font-semibold mb-4">My tickets</h1>
         {me.assigned_tickets.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-gray-400">No open tickets assigned to you.</p>
         ) : (
-          <ul className="divide-y divide-gray-100 dark:divide-gray-800">
+          <ul className="space-y-2">
             {me.assigned_tickets.map((t) => (
-              <li key={t.id} className="py-3 flex items-center justify-between">
-                <div>
-                  <Link to={`/projects/${t.project_id}`} className="hover:underline">
+              <li key={t.id}>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/projects/${t.project_id}?ticket=${t.id}`)}
+                  className="w-full flex items-center justify-between gap-2 rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2.5 text-left hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
+                >
+                  <div>
                     <span className="font-mono text-xs text-gray-500 dark:text-gray-400 mr-2">#{t.number}</span>
                     <span className="text-sm font-medium">{t.title}</span>
-                  </Link>
-                  {dueSoonIds.has(t.id) && (
-                    <span
-                      className={`ml-2 text-xs rounded px-1.5 py-0.5 ${
-                        isOverdue(t.due_date)
-                          ? "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
-                          : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
-                      }`}
-                    >
-                      {isOverdue(t.due_date) ? "Overdue" : "Due soon"}
-                    </span>
-                  )}
-                </div>
-                <span className={`text-xs rounded px-1.5 py-0.5 ${PRIORITY_COLORS[t.priority]}`}>
-                  {PRIORITY_LABELS[t.priority]}
-                </span>
+                    {dueSoonIds.has(t.id) && (
+                      <span
+                        className={`ml-2 text-xs rounded px-1.5 py-0.5 ${
+                          isOverdue(t.due_date)
+                            ? "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
+                            : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
+                        }`}
+                      >
+                        {isOverdue(t.due_date) ? "Overdue" : "Due soon"}
+                      </span>
+                    )}
+                  </div>
+                  <span className={`shrink-0 text-xs rounded px-1.5 py-0.5 ${PRIORITY_COLORS[t.priority]}`}>
+                    {PRIORITY_LABELS[t.priority]}
+                  </span>
+                </button>
               </li>
             ))}
           </ul>
@@ -71,7 +76,7 @@ function DashboardPage() {
         )}
       </div>
 
-      <div>
+      <div className="border border-gray-200 dark:border-gray-700 rounded-md p-4">
         <h2 className="text-sm font-medium mb-3">Projects</h2>
         {me.projects.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-gray-400">You're not a member of any project yet.</p>
@@ -92,7 +97,7 @@ function DashboardPage() {
       </div>
 
       {insights.projects.length > 0 && (
-        <div>
+        <div className="border border-gray-200 dark:border-gray-700 rounded-md p-4">
           <h2 className="text-sm font-medium mb-3">Insights</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             {insights.projects.map((p) => (

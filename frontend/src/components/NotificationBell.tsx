@@ -13,6 +13,10 @@ import { getTicket } from "../api/tickets";
 function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
+  // Glows red from the moment a notification arrives until the user opens
+  // the dropdown to look at it — separate from unreadCount so it doesn't
+  // reappear just because some notifications are still individually unread.
+  const [hasUnseen, setHasUnseen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -23,6 +27,7 @@ function NotificationBell() {
 
     const socket = connectNotificationSocket((n) => {
       setNotifications((prev) => [n, ...prev]);
+      setHasUnseen(true);
     });
 
     return () => socket.close();
@@ -40,6 +45,11 @@ function NotificationBell() {
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
 
+  function handleToggleOpen() {
+    setOpen((v) => !v);
+    setHasUnseen(false);
+  }
+
   async function handleNotificationClick(n: Notification) {
     if (!n.is_read) {
       try {
@@ -53,7 +63,7 @@ function NotificationBell() {
     if (n.related_ticket_id) {
       try {
         const ticket = await getTicket(n.related_ticket_id);
-        navigate(`/projects/${ticket.project_id}`);
+        navigate(`/projects/${ticket.project_id}?ticket=${ticket.id}`);
       } catch {
         // Ticket may have been deleted since the notification was created,
         // or the user may no longer have access — fall back to the project list.
@@ -74,11 +84,15 @@ function NotificationBell() {
   return (
     <div ref={containerRef} className="relative">
       <button
-        onClick={() => setOpen((v) => !v)}
-        className="relative flex items-center justify-center rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm w-9 h-9 hover:bg-gray-50 dark:hover:bg-gray-700"
+        onClick={handleToggleOpen}
+        className={`relative flex items-center justify-center rounded-full bg-white dark:bg-gray-800 border shadow-sm w-9 h-9 hover:bg-gray-50 dark:hover:bg-gray-700 ${
+          hasUnseen
+            ? "border-red-500 animate-pulse shadow-[0_0_8px_2px_rgba(220,38,38,0.6)]"
+            : "border-gray-200 dark:border-gray-700"
+        }`}
         aria-label="Notifications"
       >
-        <Bell size={16} />
+        <Bell size={16} className={hasUnseen ? "text-red-600 dark:text-red-500" : undefined} />
         {unreadCount > 0 && (
           <span className="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-1">
             {unreadCount > 9 ? "9+" : unreadCount}

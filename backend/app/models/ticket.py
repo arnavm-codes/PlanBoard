@@ -13,6 +13,7 @@ class TicketStatus(str, enum.Enum):
     in_progress = "in_progress"
     in_review = "in_review"
     done = "done"
+    cancelled = "cancelled"
 
 
 class TicketPriority(str, enum.Enum):
