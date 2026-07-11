@@ -12,6 +12,7 @@ import NotificationBell from "./components/NotificationBell";
 import OmniSearchBar from "./components/OmniSearchBar";
 import Avatar from "./components/Avatar";
 import { useTheme, toggleTheme } from "./hooks/useTheme";
+import logoDark from "./assets/logo-dark.png";
 
 interface NavItem {
   to: string;
@@ -75,10 +76,22 @@ function App() {
   }
 
   return (
-    <div className="h-screen overflow-hidden flex bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <div className="h-screen overflow-hidden flex bg-white text-gray-900 dark:bg-black dark:text-gray-100">
       <aside className="w-56 shrink-0 h-full border-r border-gray-200 dark:border-gray-800 flex flex-col">
-        <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-800 shrink-0">
-          <span className="font-pixel font-bold text-xl tracking-wide">PlanBoard</span>
+        <div className="h-16 px-4 border-b border-gray-200 dark:border-gray-800 shrink-0 flex items-center">
+          {/* Fixed h-16 (matching the top bar's h-16) instead of vertical
+              padding, so the logo can be sized up without the row's height —
+              and therefore its border-bottom — drifting out of alignment
+              with the top bar's border-bottom on the other side of the
+              sidebar boundary. PNG has a black background — only fits the
+              true-black dark shell. Light theme keeps the pixel-font
+              wordmark until an inverted (white-bg) version of the logo is
+              provided. */}
+          {user.theme_preference === "dark" ? (
+            <img src={logoDark} alt="PlanBoard" className="h-12 w-auto object-contain" />
+          ) : (
+            <span className="font-pixel font-bold text-xl tracking-wide">PlanBoard</span>
+          )}
         </div>
 
         <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
@@ -124,7 +137,7 @@ function App() {
         {/* Dedicated top bar for the notification bell — part of normal page
             flow (not a floating overlay), so page content always starts
             below it and nothing can ever render in the same space. */}
-        <div className="sticky top-0 z-40 flex items-center justify-between gap-4 px-6 py-3 bg-white/90 dark:bg-gray-950/90 backdrop-blur border-b border-gray-200 dark:border-gray-800">
+        <div className="h-16 sticky top-0 z-40 flex items-center justify-between gap-4 px-6 bg-white/90 dark:bg-black/90 backdrop-blur border-b border-gray-200 dark:border-gray-800">
           <OmniSearchBar currentUser={user} />
           <NotificationBell />
         </div>
