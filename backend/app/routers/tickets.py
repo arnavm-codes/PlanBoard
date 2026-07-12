@@ -9,7 +9,6 @@ from app.core.deps import TicketAccess, require_project_member, require_ticket_a
 from app.core.notifications import notify_user, push_notification
 from app.database import get_db
 from app.models.comment import Comment
-from app.models.project import Project
 from app.models.project_member import ProjectMember, ProjectMemberRole
 from app.models.ticket import Ticket, TicketPriority, TicketStatus
 from app.models.user import User, UserRole
@@ -77,18 +76,11 @@ def create_ticket(
     current_user: User = Depends(require_project_member()),
     db: Session = Depends(get_db),
 ) -> Ticket:
-    # Lock the project row so concurrent ticket creations in the same project
-    # can't race to the same ticket number.
-    project = db.query(Project).filter(Project.id == project_id).with_for_update().first()
-    ticket_number = project.next_ticket_number
-    project.next_ticket_number += 1
-
     if payload.assignee_id is not None:
         _ensure_project_member(db, project_id, payload.assignee_id, current_user)
 
     ticket = Ticket(
         project_id=project_id,
-        number=ticket_number,
         title=payload.title,
         description=payload.description,
         priority=payload.priority,

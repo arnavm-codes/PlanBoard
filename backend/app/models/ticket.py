@@ -1,7 +1,7 @@
 import enum
 from datetime import date, datetime, timezone
 
-from sqlalchemy import Date, DateTime, Enum, ForeignKey, Integer, Text, UniqueConstraint
+from sqlalchemy import Date, DateTime, Enum, FetchedValue, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -25,13 +25,14 @@ class TicketPriority(str, enum.Enum):
 
 class Ticket(Base):
     __tablename__ = "tickets"
-    __table_args__ = (UniqueConstraint("project_id", "number", name="uq_ticket_project_number"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     project_id: Mapped[int] = mapped_column(
         ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    number: Mapped[int] = mapped_column(Integer, nullable=False)
+    number: Mapped[int] = mapped_column(
+        Integer, nullable=False, unique=True, server_default=FetchedValue()
+    )
     title: Mapped[str] = mapped_column(Text, nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False, default="")
     status: Mapped[TicketStatus] = mapped_column(
