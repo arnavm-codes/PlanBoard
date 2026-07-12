@@ -1,4 +1,4 @@
-![alt text](assets\ascii-art-text.png)
+![PlanBoard](assets/ascii-art-text.png)
 
 ---
 
