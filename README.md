@@ -1,4 +1,6 @@
-# PlanBoard
+![alt text](assets\ascii-art-text.png)
+
+---
 
 A self-hosted, Jira-like ticketing and project management tool for personal/small-team
 use, designed to run on a home Linux mini PC and be accessed over the local network.

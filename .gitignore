@@ -4,6 +4,7 @@ frontend/.env
 
 # Personal learning notes (not for commit)
 FORME.md
+assets
 
 # Python
 __pycache__/
