@@ -32,7 +32,7 @@ function DashboardPage() {
   const dueSoonIds = new Set(me.due_soon_tickets.map((t) => t.id));
 
   return (
-    <div className="max-w-4xl space-y-10">
+    <div className="max-w-6xl mx-auto space-y-10">
       <div className="border border-gray-200 dark:border-gray-700 rounded-md p-4">
         <h1 className="text-xl font-semibold mb-4">My tickets</h1>
         {me.assigned_tickets.length === 0 ? (

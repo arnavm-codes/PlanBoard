@@ -45,6 +45,13 @@ later phases.
 
 ## Deploying on the Mini PC (LAN access)
 
+**Important:** `VITE_API_BASE_URL` is compiled into the frontend JavaScript that runs
+*in the browser*, not on the server. If it's left as `localhost`, every device other
+than the mini PC itself will try to call its own `localhost:8000` when you log in —
+which doesn't exist — and you'll get authentication/login errors on every attempt.
+This value must be set to the mini PC's LAN IP, not `localhost`, before it's usable
+from any other device.
+
 1. Find the mini PC's LAN IP address:
 
    ```
@@ -53,16 +60,33 @@ later phases.
 
    (look for the `inet` address on your LAN interface, e.g. `192.168.1.50`).
 
-2. In `.env` on the mini PC, set:
+2. In `.env` on the mini PC, set (using the real IP, not `localhost`):
 
    ```
    CORS_ORIGIN=http://<mini-pc-ip>:<FRONTEND_PORT>
    VITE_API_BASE_URL=http://<mini-pc-ip>:<BACKEND_PORT>
    ```
 
-3. Run `docker-compose up -d --build` on the mini PC.
+   `CORS_ORIGIN` can be a comma-separated list if you also want to access it via
+   `localhost` from the mini PC itself, e.g.:
 
-4. From any other device on the same network, browse to
+   ```
+   CORS_ORIGIN=http://localhost:5173,http://<mini-pc-ip>:5173
+   ```
+
+3. Run `docker-compose up -d --build` on the mini PC. (Just changing `.env` is not
+   enough — the containers must be recreated to pick up the new values.)
+
+4. Verify the frontend container actually picked up the new value before testing in
+   a browser:
+
+   ```
+   docker compose exec frontend printenv VITE_API_BASE_URL
+   ```
+
+   This should print `http://<mini-pc-ip>:<BACKEND_PORT>`, not `localhost`.
+
+5. From any other device on the same network, browse to
    `http://<mini-pc-ip>:<FRONTEND_PORT>`.
 
    Tip: give the mini PC a DHCP reservation on your router so its LAN IP doesn't

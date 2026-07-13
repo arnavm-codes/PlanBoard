@@ -18,7 +18,7 @@ function ActivityPage() {
   if (error) return <p className="text-sm text-red-600 dark:text-red-400">{error}</p>;
 
   return (
-    <div className="max-w-2xl">
+    <div className="max-w-3xl mx-auto">
       <h1 className="text-xl font-semibold mb-4">Activity</h1>
       <ActivityFeed entries={entries} emptyMessage="No activity yet." />
     </div>

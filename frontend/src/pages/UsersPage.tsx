@@ -79,7 +79,7 @@ function UsersPage() {
   if (error) return <p className="text-sm text-red-600 dark:text-red-400">{error}</p>;
 
   return (
-    <div className="max-w-4xl space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8">
       <div>
         <h1 className="text-xl font-semibold mb-4">Users</h1>
         {rowError && <p className="text-sm text-red-600 dark:text-red-400 mb-2">{rowError}</p>}

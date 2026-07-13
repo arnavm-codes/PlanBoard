@@ -86,15 +86,15 @@ function ProjectsPage({ currentUser }: ProjectsPageProps) {
   if (error) return <p className="text-sm text-red-600 dark:text-red-400">{error}</p>;
 
   return (
-    <div className="max-w-3xl space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8">
       <div>
         <h1 className="text-xl font-semibold mb-4">Projects</h1>
         {projects.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-gray-400">No projects yet.</p>
         ) : (
-          <div className="flex flex-wrap gap-3">
+          <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(240px,1fr))]">
             {projects.map((p) => (
-              <div key={p.id} className="relative w-64">
+              <div key={p.id} className="relative">
                 <Link
                   to={`/projects/${p.id}`}
                   className={`block rounded-lg border p-4 pr-10 hover:shadow-md transition-shadow ${projectColorClasses(p.id)}`}
